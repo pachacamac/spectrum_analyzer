@@ -1,0 +1,51 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <meta charset="UTF-8">
+  <title>Spectrum Analyzer</title>
+</head>
+<body>
+<div id="waterfall"></div>
+<script src="waterfall.js"></script>
+<script>
+(function(window, document, undefined) {
+  function gotStream(stream) {
+    if (typeof AudioContext !== "undefined") {
+      context = new AudioContext();
+    } else if (typeof webkitAudioContext !== "undefined") {
+      context = new webkitAudioContext();
+    } else if (typeof mozAudioContext !== "undefined") {
+      context = new mozAudioContext();
+    }
+
+    streamSource = context.createMediaStreamSource(stream);
+
+    var waterfall = Waterfall({
+      stream: streamSource,
+      context: context
+    });
+
+    window.waterfall = waterfall;
+    document.getElementById('tonetest').addEventListener("click", function(){
+      waterfall.sequence([[14000,200], [0,200], [14500,200], [0,200], [15000,200]]);
+    });
+
+    document.getElementById('tonetest_stop').addEventListener("click", function(){
+      waterfall.stop();
+    });
+
+  }
+
+  function handleError(err) {
+    console.log("An error occurred: " + err);
+  }
+
+  navigator.getMedia = navigator.getUserMedia || navigator.webkitGetUserMedia || navigator.mozGetUserMedia || navigator.msGetUserMedia;
+  navigator.getMedia({ audio: true }, gotStream, handleError);
+}(window, document));
+</script>
+
+<button id="tonetest">tonetest</button>
+<button id="tonetest_stop">tonetest stop</button>
+</body>
+</html>
