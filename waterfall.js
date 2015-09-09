@@ -41,15 +41,15 @@ var Waterfall = (function(options){
     return (px / width) * 22000;
   };
 
-  canvas.addEventListener("mousemove", function(e){
+  canvas.addEventListener("mousemove touchmove", function(e){
     info.innerText = pxToFreq(e.offsetX);
   });
 
-  canvas.addEventListener("mousedown", function(e){
+  canvas.addEventListener("mousedown touchstart", function(e){
     play(pxToFreq(e.offsetX));
   });
 
-  canvas.addEventListener("mouseup", function(e){
+  canvas.addEventListener("mouseup touchend", function(e){
     stop();
   });
 
