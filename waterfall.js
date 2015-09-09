@@ -40,18 +40,26 @@ var Waterfall = (function(options){
   var pxToFreq = function(px){
     return (px / width) * 22000;
   };
+  
+  var addEventListeners = function(elem, events, f){
+    if(typeof events == 'string'){events = events.split(' ');}
+    for(var i=0; i<events.length; i++){elem.addEventListener(events[i], f)};
+  };
 
-  canvas.addEventListener("mousemove touchmove", function(e){
+  addEventListeners(canvas, "mousemove touchmove", function(e){
+    e.preventDefault();
     info.innerText = pxToFreq(e.offsetX);
-  });
+  }, false);
 
-  canvas.addEventListener("mousedown touchstart", function(e){
+  addEventListeners(canvas, "mousedown touchstart", function(e){
+    e.preventDefault();
     play(pxToFreq(e.offsetX));
-  });
+  }, false);
 
-  canvas.addEventListener("mouseup touchend", function(e){
+  addEventListeners(canvas, "mouseup touchend", function(e){
+    e.preventDefault();
     stop();
-  });
+  }, false);
 
   var draw = function() {
     window.requestAnimationFrame(draw);
