@@ -53,7 +53,9 @@ var Waterfall = (function(options){
 
   addEventListeners(canvas, "mousedown touchstart", function(e){
     e.preventDefault();
-    play(pxToFreq(e.touches ? e.touches[0].pageX : e.offsetX));
+    var x = pxToFreq(e.touches ? e.touches[0].pageX : e.offsetX);
+    info.innerText = x;
+    play(x);
   }, false);
 
   addEventListeners(canvas, "mouseup touchend", function(e){
