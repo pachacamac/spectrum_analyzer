@@ -63,16 +63,23 @@ var Waterfall = (function(options){
     stop();
   }, false);
 
+  var bufferSize = 5; // adjust this to adjust speed
+  var buffer = [];
   var draw = function() {
     window.requestAnimationFrame(draw);
     frequencies = new Uint8Array(analyser.frequencyBinCount);
-    analyser.getByteFrequencyData(frequencies);
-    canvasContext.drawImage(canvasContext.canvas, 0, 0, width, height - moveBy, 0, moveBy, width, height - moveBy);
-    for(var i = 0; i < frequencies.length; i++) {
-      var mag = frequencies[i];
-      //mag = Math.floor(Math.pow(mag/255, 0.5)*255);
-      canvasContext.fillStyle = '#'+heatmap[mag]; //"rgba(0,"+mag+",0,1)";
-      canvasContext.fillRect(i, 0, 1, moveBy);
+    buffer.push(frequencies);
+    if(buffer.length >= bufferSize){
+      frequencies = buffer.reduce((s,e)=>e.map((f,i)=>s[i]+f*(1/bufferSize)), Array(frequencies.length).fill(0));
+      buffer = [];
+      analyser.getByteFrequencyData(frequencies);
+      canvasContext.drawImage(canvasContext.canvas, 0, 0, width, height - moveBy, 0, moveBy, width, height - moveBy);
+      for(var i = 0; i < frequencies.length; i++) {
+        var mag = frequencies[i];
+        //mag = Math.floor(Math.pow(mag/255, 0.5)*255);
+        canvasContext.fillStyle = '#'+heatmap[mag]; //"rgba(0,"+mag+",0,1)";
+        canvasContext.fillRect(i, 0, 1, moveBy);
+      }
     }
   };
 
